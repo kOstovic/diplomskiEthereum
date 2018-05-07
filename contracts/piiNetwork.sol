@@ -6,9 +6,10 @@ contract piiszg {
     enum UniversityComponenetType { FER, FFZG, FSB}
   
     struct Member {
-        string jmbag;
+        //string jmbag;
         PersonType personType;
-        address membersHashedAddress;
+        UniversityComponenetType universityComponenetType;
+        //address membersHashedAddress;
         //public mapping(uint => bool) access;
     }
     struct ControlParameter{
@@ -17,12 +18,12 @@ contract piiszg {
         //uint timeRequested;
     }
     struct UniversityComponenet {
-        string universityKey;
+        //string universityKey;
         UniversityComponenetType universityComponenetType;
-        mapping(uint => ControlParameter) access;
         uint32 openingTime;
         uint32 closingTime;
-        address universityComponenetsHashedAddress;
+        //address universityComponenetsHashedAddress;
+        mapping(uint => ControlParameter) access;
     }
 
     
@@ -31,7 +32,8 @@ contract piiszg {
     mapping(address => Member) public members;
 
     //provjera jesu li dobiveni podatci u ispravnom formatu
-    function testNum4(string str) private constant returns (bool){
+    //pure zato što ne vraća ništa iz memorije niti traži po memoriji
+    function testNum4(string str) private pure returns (bool){
         bytes memory b = bytes(str);
         if(b.length != 4) return false;
         for(uint i; i<4; i++){
@@ -40,7 +42,7 @@ contract piiszg {
         }
         return true;
     }
-    function testNum10(string str) private constant returns (bool){
+    function testNum10(string str) private pure returns (bool){
         bytes memory b = bytes(str);
         if(b.length != 10) return false;
         for(uint i; i<10; i++){
@@ -48,7 +50,7 @@ contract piiszg {
         }
         return true;
     }    
-    function testStr20(string str) private constant returns (bool){
+    function testStr20(string str) private pure returns (bool){
         bytes memory b = bytes(str);
         if(b.length != 20) return false;
         for(uint i; i<20; i++){
@@ -58,26 +60,28 @@ contract piiszg {
         return true;
     }    
     
-    function createMember(address _hashedValue, string _jmbag, uint _personType) public {
-        require(_personType <=3 );
+    function createMember(address _hValue, PersonType _personType, UniversityComponenetType _uComponenetType) public {
+        //require(_personType <= 3 && _uComponenetType <= 3);
         //_member.personType = uint(_personType);
-        members[_hashedValue] = Member(_jmbag,_personType);
+        members[_hValue] = Member(_personType,_uComponenetType);
     }
 
-    function createUniversityComponenet(address _hashedValue, string _universityKey, uint _universityComponenetType,uint32 _openingTime, uint32 _closingTime) public {
-        require(_universityComponenetType <= 3);
-        universityComponenets[_hashedValue] = UniversityComponenet(_universityKey, _universityComponenetType, _openingTime, _closingTime);
+    function createUniversityComponenet(address _hValue, UniversityComponenetType _uComponenetType,uint32 _openingTime, uint32 _closingTime) public {
+        //require(_uComponenetType <= 3);
+        universityComponenets[_hValue] = UniversityComponenet(_uComponenetType, _openingTime, _closingTime);
         
     } 
     
     function callTransaction(address addressHashMember, address addressHashUniversityComponenet, uint ttime) public returns(bool){
-        require(testStr20(addressHashMember) && testStr20(addressHashUniversityComponenet) && ttime <= 86400);
+        //require(testStr20(addressHashMember) && testStr20(addressHashUniversityComponenet) && ttime <= 86400);
+        require(ttime <= 86400);
         
+        return true;
     }
     
     
     
-
+/*
     address chairperson;
     mapping(address => Voter) voters;
     Proposal[] proposals;
@@ -128,5 +132,5 @@ contract piiszg {
                 winningVoteCount = proposals[prop].voteCount;
                 _winningProposal = prop;
             }
-    }
+    }*/
 }
