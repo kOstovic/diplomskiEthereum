@@ -1,6 +1,6 @@
 {
   "name": "truffle-init-webpack",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Frontend example using truffle v3",
   "scripts": {
     "lint": "eslint ./",
@@ -33,5 +33,8 @@
     "web3": "^0.20.0",
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.3.0"
+  },
+  "dependencies": {
+    "sha1": "^1.1.1"
   }
 }
