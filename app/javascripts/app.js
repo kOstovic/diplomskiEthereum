@@ -7,11 +7,11 @@ import { default as contract } from 'truffle-contract'
 import { default as Sha1} from 'sha1';
 
 // Import our contract artifacts and turn them into usable abstractions.
-import metacoin_artifacts from '../../build/contracts/MetaCoin.json'
+//mport metacoin_artifacts from '../../build/contracts/MetaCoin.json'
 import piisznetwork_artifacts from '../../build/contracts/piiSZGNetwork.json'
 
 // MetaCoin is our usable abstraction, which we'll use through the code below.
-var MetaCoin = contract(metacoin_artifacts);
+//var MetaCoin = contract(metacoin_artifacts);
 var piiSZGNetwork = contract(piisznetwork_artifacts);
 
 // The following code is simple to show off interacting with your contracts.
@@ -27,7 +27,7 @@ window.App = {
     var self = this;
 
     // Bootstrap the MetaCoin abstraction for Use.
-    MetaCoin.setProvider(web3.currentProvider);
+    //MetaCoin.setProvider(web3.currentProvider);
     piiSZGNetwork.setProvider(web3.currentProvider);
 
     // Get the initial account balance so it can be displayed.
@@ -103,7 +103,7 @@ window.App = {
     this.setStatus("Initiating transaction of creating University Component... (please wait)");
 
     var pii;
-    piiNetwork.deployed().then(function(instance) {
+    piiSZGNetwork.deployed().then(function(instance) {
       pii = instance;
       return pii.createUniversityComponenet(universityKeyHashed,universityComponenetType, openingTime, closingTime, {from: account});//
     }).then(function(creation) {
@@ -125,7 +125,7 @@ window.App = {
     this.setStatus("Initiating transaction of creating Member... (please wait)");
 
     var pii;
-    piiNetwork.deployed().then(function(instance) {
+    piiSZGNetwork.deployed().then(function(instance) {
       pii = instance;
       return pii.createMember(jmbagHashed, personType, uComponenetType, {from: account});
     }).then(function(creation) {
@@ -150,7 +150,7 @@ window.App = {
     
 
     var pii;
-    piiNetwork.deployed().then(function(instance) {
+    piiSZGNetwork.deployed().then(function(instance) {
       pii = instance;
       return pii.callAccessTransaction(jmbagHashed, universityKeyHashed, ttime, n, {from: account});//
     }).then(function(access) {

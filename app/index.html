@@ -8,7 +8,7 @@
 <body>
   <h1>pii-szg-network</h1>
   <h2>Access control for University</h2>
-  <p class="network-name">piiSZGNetwork@0.0.4 Ethereum Truffle</p>
+  <p class="network-name">piiSZGNetwork@0.0.5 Ethereum Truffle</p>
   <!--
   <h3>You have <span class="black"><span id="balance"></span> META</span></h3>
   <br>
@@ -48,20 +48,20 @@
   <h1>Create Member</h1>
   <form>
 		<div class="modal-body">
-			jmbag:<br><input type="text" id="jmbagCreateMem" name="jmbagCreateMem" placeholder="0036111222"> <br>
-      personType:<br><input type="text" id="personTypeCreateMem" name="personTypeCreateMem" placeholder="Student">
+      jmbag:<br><input type="text" id="jmbagCreateMem" name="jmbagCreateMem" placeholder="0036111222"> <br>
+      personType:<br> 
+      <select name="uComponenetTypeCreateMem" id="uComponenetTypeCreateMem" class="chooseBox">
+        <option value="Student" selected >Student</option>
+        <option value="Profesor">Profesor</option>
+        <option value="Staff">Staff</option>
+      </select> 
+      <br>universityComponenetType:<br>
       <select name="personTypeCreateMem" id="personTypeCreateMem" class="chooseBox">
         <option value="FER" selected >FER</option>
         <option value="FFZG">FFZG</option>
         <option value="FSB">FSB</option>
       </select> 
       <br>
-      universityComponenetType:<br> 
-      <select name="uComponenetTypeCreateMem" id="uComponenetTypeCreateMem" class="chooseBox">
-        <option value="Student" selected >Student</option>
-        <option value="Profesor">Profesor</option>
-        <option value="Staff">Staff</option>
-      </select> 
       <br>
 		</div>		
 		<br>

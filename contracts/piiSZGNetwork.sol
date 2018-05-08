@@ -1,6 +1,6 @@
 pragma solidity ^0.4.23;
 
-contract piiSZGNetwork {
+contract piiSZGNetwork {//require da ne postoje vec
     
     //enums za lakšu provjeru tipova sastavnica sveučilišta i osoba
     enum PersonType { Student, Profesor, Staff}
@@ -73,30 +73,39 @@ contract piiSZGNetwork {
     }*/
     //getteri za osobu
     function getPersonType(address _hValue) public view returns (uint){
+        require(members[_hValue].set == true);
         return uint(members[_hValue].personType);
     }
     function getUniversityComponenetTypeMem(address _hValue) public view returns (uint){
+        require(members[_hValue].set == true);
         return uint(members[_hValue].universityComponenetType);
     }
     function getMemberSet(address _hValue) public view returns (bool){
+        require(members[_hValue].set == true);
         return members[_hValue].set;
     }
 
     //getteri za sveučilišnu komponentu
     function getUniversityComponenetTypeUC(address _hValue) public view returns (uint){
+        require(universityComponenets[_hValue].set == true);
         return uint(universityComponenets[_hValue].universityComponenetType);
     }    
     function getOpeningTime(address _hValue) public view returns (uint32){
+        require(universityComponenets[_hValue].set == true);
         return universityComponenets[_hValue].openingTime;
     }
     function getClosingTime(address _hValue) public view returns (uint32){
+        require(universityComponenets[_hValue].set == true);
         return universityComponenets[_hValue].closingTime;
     }
     function getUniversityComponenetSet(address _hValue) public view returns (bool){
+        require(universityComponenets[_hValue].set == true);
         return universityComponenets[_hValue].set;
     }
-    function getAccess(address _hValue, uint time) public view returns (bytes){
-        return extractControlParameterStructToBytes(universityComponenets[_hValue].access[time]);
+    function getAccess(address _hValue, uint time) public view returns (bool, address){
+        require(universityComponenets[_hValue].set == true);
+        return (universityComponenets[_hValue].access[time].grantAccess, universityComponenets[_hValue].access[time].membersHashedAddress);
+        //return extractControlParameterStructToBytes(universityComponenets[_hValue].access[time]);
     }
     
 
@@ -130,34 +139,11 @@ contract piiSZGNetwork {
         }
         return true;
     }    
-    function extractControlParameterStructToBytes(ControlParameter u) private pure returns (bytes data) {
-        // _size = "sizeof" u.grantAccess + "sizeof" u.membersHashedAddress
-        uint _size = 1 + 20;
-        byte _aaa;
-        bytes memory _data = new bytes(_size);
-        if(u.grantAccess==false) 
-            _aaa = "0"; 
-        else
-            _aaa = "1";
-
-        uint counter=0;
-        for (uint i=0;i<1;i++)
-        {
-            _data[counter]=_aaa;
-            counter++;
-        }
-
-        for (i=0;i<20;i++)
-        {
-            _data[counter]=byte(u.membersHashedAddress)[i];
-            counter++;
-        }
-        return (_data);
-    }
 
     //kreiranje nove osobe na temelju unosa hashedValue jmbaga
     function createMember(address _hValue, PersonType _personType, UniversityComponenetType _uComponenetType) public returns(bool){
         require(uint(_personType) < 3 && uint(_uComponenetType) < 3);
+        require(members[_hValue].set != true);
         //registerMember(_hValue);
         members[_hValue] = Member(_personType,_uComponenetType,true);
         return true;
@@ -165,8 +151,9 @@ contract piiSZGNetwork {
 
     //kreiranje nove komponente sveučilišta na temelju unosa hashedValue universityKeya
     function createUniversityComponenet(address _hValue, UniversityComponenetType _uComponenetType,uint32 _openingTime, uint32 _closingTime) public returns(bool){
-        require(uint(_uComponenetType) < 3);
+        require(uint(_uComponenetType) < 3 && _openingTime <= 86400 && _closingTime <= 86400);
         //_hValue = msg.sender;
+        require(universityComponenets[_hValue].set != true);
         //registerUC(_hValue);
         universityComponenets[_hValue] = UniversityComponenet(_uComponenetType, _openingTime, _closingTime,true);
         return true;
