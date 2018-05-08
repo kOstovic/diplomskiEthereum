@@ -40,6 +40,11 @@ contract piiSZGNetwork {
 
     }
     
+    //hashirat će se u 20bajtnu adresu? i neće moći iterirati?
+    //mapa svih komponenti sveučilišta i svih osoba preko hasha jmbaga/universityKeya
+    mapping(address => UniversityComponenet) public universityComponenets;
+    mapping(address => Member) public members;
+    
     /* Data layer za mapping
     mapping(uint256 => address) public memberSequence;
     uint256 public numberOfMembers = 0;
@@ -66,15 +71,39 @@ contract piiSZGNetwork {
         listOfAddressesUC.push(_universityComponenet);
         registeredUC[_universityComponenet] = true;
     }*/
-    
-    
-    //hashirat će se u 20bajtnu adresu? i neće moći iterirati?
-    //mapa svih komponenti sveučilišta i svih osoba preko hasha jmbaga/universityKeya
-    mapping(address => UniversityComponenet) public universityComponenets;
-    mapping(address => Member) public members;
+    //getteri za osobu
+    function getPersonType(address _hValue) public view returns (uint){
+        return uint(members[_hValue].personType);
+    }
+    function getUniversityComponenetTypeMem(address _hValue) public view returns (uint){
+        return uint(members[_hValue].universityComponenetType);
+    }
+    function getMemberSet(address _hValue) public view returns (bool){
+        return members[_hValue].set;
+    }
 
+    //getteri za sveučilišnu komponentu
+    function getUniversityComponenetTypeUC(address _hValue) public view returns (uint){
+        return uint(universityComponenets[_hValue].universityComponenetType);
+    }    
+    function getOpeningTime(address _hValue) public view returns (uint32){
+        return universityComponenets[_hValue].openingTime;
+    }
+    function getClosingTime(address _hValue) public view returns (uint32){
+        return universityComponenets[_hValue].closingTime;
+    }
+    function getUniversityComponenetSet(address _hValue) public view returns (bool){
+        return universityComponenets[_hValue].set;
+    }
+    function getAccess(address _hValue, uint time) public view returns (bytes){
+        return extractControlParameterStructToBytes(universityComponenets[_hValue].access[time]);
+    }
+    
+
+    //pomoćne funckije
     //provjera jesu li dobiveni podatci u ispravnom formatu
     //pure zato što ne vraća ništa iz memorije niti traži po memoriji
+    //vraća byteove strukture ControlParameter zato što ne postoji concanate
     function testNum4(string str) internal pure returns (bool){
         bytes memory b = bytes(str);
         if(b.length != 4) return false;
@@ -101,7 +130,31 @@ contract piiSZGNetwork {
         }
         return true;
     }    
-    
+    function extractControlParameterStructToBytes(ControlParameter u) private pure returns (bytes data) {
+        // _size = "sizeof" u.grantAccess + "sizeof" u.membersHashedAddress
+        uint _size = 1 + 20;
+        byte _aaa;
+        bytes memory _data = new bytes(_size);
+        if(u.grantAccess==false) 
+            _aaa = "0"; 
+        else
+            _aaa = "1";
+
+        uint counter=0;
+        for (uint i=0;i<1;i++)
+        {
+            _data[counter]=_aaa;
+            counter++;
+        }
+
+        for (i=0;i<20;i++)
+        {
+            _data[counter]=byte(u.membersHashedAddress)[i];
+            counter++;
+        }
+        return (_data);
+    }
+
     //kreiranje nove osobe na temelju unosa hashedValue jmbaga
     function createMember(address _hValue, PersonType _personType, UniversityComponenetType _uComponenetType) public returns(bool){
         require(uint(_personType) < 3 && uint(_uComponenetType) < 3);
