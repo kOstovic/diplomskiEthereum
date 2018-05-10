@@ -23,58 +23,7 @@ const hour = 3600;
 const minute = 60;
 var baseUrl;
 var pii;
-/*
-if (typeof web3 !== 'undefined') {
-  web3 = new Web3(web3.currentProvider);
-  window.web3 = new Web3(web3.currentProvider);
-  piiSZG.setProvider(web3.currentProvider);
-  web3.eth.getAccounts(function(err, accs) {
-    if (err != null) {
-      alert("There was an error fetching your accounts.");
-      return;
-    }
 
-    if (accs.length == 0) {
-      alert("Couldn't get any accounts! Make sure your Ethereum client is configured correctly.");
-      return;
-    }
-
-    accounts = accs;
-    account = accounts[0];
-
-    //self.refreshBalance();
-  });
- } else {
-  // set the provider you want from Web3.providers
-  var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-  window.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-  piiSZG.setProvider(web3.currentProvider);
-  web3.eth.getAccounts(function(err, accs) {
-    if (err != null) {
-      alert("There was an error fetching your accounts.");
-      return;
-    }
-
-    if (accs.length == 0) {
-      alert("Couldn't get any accounts! Make sure your Ethereum client is configured correctly.");
-      return;
-    }
-
-    accounts = accs;
-    account = accounts[0];
-
-    //self.refreshBalance();
-  });
- }*/
-
- //App.start(); 
-/*
-if (typeof web3 !== 'undefined') {
-  console.warn("Using web3 detected from external source. If you find that your accounts don't appear or you have 0 MetaCoin, ensure you've configured that source properly. If using MetaMask, see the following link. Feel free to delete this warning. :) http://truffleframework.com/tutorials/truffle-and-metamask")
-  // Use Mist/MetaMask's provider
-  //window.history.pushState("object or string", "Title", "/"+window.location.href.substring(window.location.href.lastIndexOf('/') + 1).split("?")[0]);
-  window.web3 = new Web3(web3.currentProvider);
-}*/
 window.App = {
   start: function() {
     var self = this;
@@ -83,7 +32,11 @@ window.App = {
     piiSZG.setProvider(web3.currentProvider);
     piiSZG.deployed().then(function(instance) {
       pii = instance;
-      // Get the initial account balance so it can be displayed.
+      if(typeof instance !== 'undefined'){
+        self.setStatus("Ready for transactions");
+      }
+      
+      /* Get the initial account balance so it can be displayed.
       web3.eth.getAccounts(function(err, accs) {
       if (err != null) {
         alert("There was an error fetching your accounts.");
@@ -98,7 +51,7 @@ window.App = {
       accounts = accs;
       account = accounts[0];
       self.setStatus("Ready for transactions");
-      });
+      });*/
     });
   },
 
@@ -114,7 +67,7 @@ window.App = {
     /*var pii;
     piiSZG.deployed().then(function(instance) {
       pii = instance;*/
-      pii.getAccess.call(universityKeyHashed, n, {from: account})
+      pii.getAccess.call(universityKeyHashed, n, {from: web3.eth.accounts[0], gas: 600000})
       .then(function(value) {
         self.setStatus(value.toString());
       }).catch(function(e) {
@@ -141,7 +94,7 @@ window.App = {
     /*var pii;
     piiSZG.deployed().then(function(instance) {
       pii = instance;*/
-      pii.createUniversityComponenet(universityKeyHashed,universityComponenetType, openingTime, closingTime, {from: account})
+      pii.createUniversityComponenet(universityKeyHashed,universityComponenetType, openingTime, closingTime, {from: web3.eth.accounts[0], gas: 600000})
      .then(function(creation) {
       if(creation.receipt.status == "0x01"){
         console.log(creation);
@@ -184,7 +137,7 @@ window.App = {
     //var pii;
     /*piiSZG.deployed().then(function(instance) {
       pii = instance;*/
-      pii.createMember(jmbagHashed, personType, uComponenetType, {from: account})
+      pii.createMember(jmbagHashed, personType, uComponenetType, {from: web3.eth.accounts[0], gas: 600000})
       .then(function(creation) {
       if(creation.receipt.status == "0x01"){
         console.log(creation);
@@ -227,7 +180,7 @@ window.App = {
     //var pii;
     //piiSZG.deployed().then(function(instance) {
       //pii = instance;
-      pii.callAccessTransaction(jmbagHashed, universityKeyHashed, ttime, n, {from: account})
+      pii.callAccessTransaction(jmbagHashed, universityKeyHashed, ttime, n, {from: web3.eth.accounts[0], gas: 600000})
       .then(function(access) {
         console.log(access);
         self.setStatus("Transaction complete!");

@@ -5,6 +5,10 @@ contract piiSZG {
     //enums za lakšu provjeru tipova sastavnica sveučilišta i osoba
     enum PersonType { Student, Profesor, Staff}
     enum UniversityComponenetType { FER, FFZG, FSB}
+    
+    uint timeInDay = 86400;
+    uint8 numOfPersonType = 3;
+    uint8 numOfUniversityComponenetType = 3;
   
     //struktura Member/Osoba, sadrži enums tipOsobe i 
     //tipFakulteta te bool set za provjeru postoji li 
@@ -48,32 +52,6 @@ contract piiSZG {
     mapping(address => UniversityComponenet) public universityComponenets;
     mapping(address => Member) public members;
     
-    /* Data layer za mapping
-    mapping(uint256 => address) public memberSequence;
-    uint256 public numberOfMembers = 0;
-    address[] listOfAddressesMem;
-    mapping(address => bool) registeredMem;
-
-    function registerMember(address _member) public {
-        //only unregistered users will be registered
-        require(!registeredMem[_member]);
-        memberSequence[numberOfMembers++] = _member;
-        listOfAddressesMem.push(_member);
-        registeredMem[_member] = true;
-    }
-    
-    mapping(uint256 => address) public UCSequence;
-    uint256 public numberOfUniversityComponenets = 0;
-    address[] listOfAddressesUC;
-    mapping(address => bool) registeredUC;
-
-    function registerUC(address _universityComponenet) public {
-        //only unregistered users will be registered
-        require(!registeredUC[_universityComponenet]);
-        UCSequence[numberOfUniversityComponenets++] = _universityComponenet;
-        listOfAddressesUC.push(_universityComponenet);
-        registeredUC[_universityComponenet] = true;
-    }*/
     //getteri za osobu
     function getPersonType(address _hValue) public view returns (uint personType){
         require(members[_hValue].set == true);
@@ -145,7 +123,7 @@ contract piiSZG {
 
     //kreiranje nove osobe na temelju unosa hashedValue jmbaga
     function createMember(address _hValue, PersonType _personType, UniversityComponenetType _uComponenetType) public returns(bool creationSuccessful){
-        require(uint(_personType) < 3 && uint(_uComponenetType) < 3);
+        require(uint(_personType) < numOfPersonType && uint(_uComponenetType) < numOfUniversityComponenetType);
         require(members[_hValue].set != true);
         //registerMember(_hValue);
         members[_hValue] = Member(_personType,_uComponenetType,true);
@@ -154,7 +132,7 @@ contract piiSZG {
 
     //kreiranje nove komponente sveučilišta na temelju unosa hashedValue universityKeya
     function createUniversityComponenet(address _hValue, UniversityComponenetType _uComponenetType,uint32 _openingTime, uint32 _closingTime) public returns(bool creationSuccessful){
-        require(uint(_uComponenetType) < 3 && _openingTime <= 86400 && _closingTime <= 86400);
+        require(uint(_uComponenetType) < numOfUniversityComponenetType && _openingTime <= timeInDay && _closingTime <= timeInDay);
         //_hValue = msg.sender;
         require(universityComponenets[_hValue].set != true);
         //registerUC(_hValue);
@@ -164,23 +142,23 @@ contract piiSZG {
     
     //funkcija za provjeru i kreiranje transakcije te zove interne funkcije koje provjeravaju logičke cijeline te na temelju toga radi transakciju
     function callAccessTransaction(address addressHashMember, address addressHashUniversityComponenet, uint ttime, uint CurrentTransactionTime) public returns(bool creationSuccessful){
-        //require(testStr20(addressHashMember) && testStr20(addressHashUniversityComponenet) && ttime <= 86400);
-        require(ttime <= 86400 && members[addressHashMember].set == true && universityComponenets[addressHashUniversityComponenet].set == true);
+        //require(testStr20(addressHashMember) && testStr20(addressHashUniversityComponenet) && ttime <= timeInDay);
+        require(ttime <= timeInDay && members[addressHashMember].set == true && universityComponenets[addressHashUniversityComponenet].set == true);
         bool _access = false;
         //addressHashUniversityComponenet = msg.sender;
-        _access = checkFirstCondition(addressHashMember,addressHashUniversityComponenet,ttime);
+        _access = checkSameUniversityOpenedOrPrivileged(addressHashMember,addressHashUniversityComponenet,ttime);
         if(_access == true){
             universityComponenets[addressHashUniversityComponenet].access[CurrentTransactionTime] = ControlParameter(_access,addressHashMember);
             //emit ControlAccess(true);
             return true;
         }
-        _access = checkSecondCondition(addressHashMember,addressHashUniversityComponenet,ttime);    
+        _access = checkNotSameUniversityOpenedStudentProfesor(addressHashMember,addressHashUniversityComponenet,ttime);    
         if(_access == true){
             universityComponenets[addressHashUniversityComponenet].access[CurrentTransactionTime] = ControlParameter(_access,addressHashMember);
             //emit ControlAccess(true);
             return true;
         }
-        _access = checkThirdCondition(addressHashMember,addressHashUniversityComponenet,ttime);    
+        _access = checkNotSameUniversityOpenedFER(addressHashMember,addressHashUniversityComponenet,ttime);    
         if(_access == true){
             universityComponenets[addressHashUniversityComponenet].access[CurrentTransactionTime] = ControlParameter(_access,addressHashMember);
             //emit ControlAccess(true);
@@ -192,7 +170,7 @@ contract piiSZG {
     }
     
     //funkcije za reguliranje ulaza podijeljenje prema logičkim komponentama
-    function checkFirstCondition(address addressHashMember, address addressHashUniversityComponenet, uint ttime) internal view returns(bool){
+    function checkSameUniversityOpenedOrPrivileged(address addressHashMember, address addressHashUniversityComponenet, uint ttime) internal view returns(bool){
         UniversityComponenet memory _universityComponenet = universityComponenets[addressHashUniversityComponenet];
         Member memory _member = members[addressHashMember]; 
         if(_universityComponenet.universityComponenetType == _member.universityComponenetType){
@@ -203,7 +181,7 @@ contract piiSZG {
         }
         return false;    
     }
-    function checkSecondCondition(address addressHashMember, address addressHashUniversityComponenet, uint ttime) internal view returns(bool){
+    function checkNotSameUniversityOpenedStudentProfesor(address addressHashMember, address addressHashUniversityComponenet, uint ttime) internal view returns(bool){
         UniversityComponenet memory _universityComponenet = universityComponenets[addressHashUniversityComponenet];
         Member memory _member = members[addressHashMember]; 
         if(uint(_member.personType) == 0 || uint(_member.personType) == 1){
@@ -212,7 +190,7 @@ contract piiSZG {
         }
         return false;
     }
-    function checkThirdCondition(address addressHashMember, address addressHashUniversityComponenet, uint ttime) internal view returns(bool){
+    function checkNotSameUniversityOpenedFER(address addressHashMember, address addressHashUniversityComponenet, uint ttime) internal view returns(bool){
         UniversityComponenet memory _universityComponenet = universityComponenets[addressHashUniversityComponenet];
         //Member memory  _member = members[addressHashMember]; 
         if(uint(_universityComponenet.universityComponenetType) == 0){
@@ -222,4 +200,3 @@ contract piiSZG {
         return false;
     }
 }
-
