@@ -1,7 +1,7 @@
 # diplomskiEthereum
 
 #prvi terminal pokrenuti mining node
-ganache-cli
+ganache-cli --network-id 1337
 
 
 #u truffle.js promijeniti port(8545)
