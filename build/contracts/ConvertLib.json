@@ -453,10 +453,10 @@
     "1337": {
       "events": {},
       "links": {},
-      "address": "0xdc5380960e6d154b6bac6aeba04b0c8ddd8701f7",
-      "transactionHash": "0xcff50054bc1666c40dbc25659dbcb0b6a19fadd236a0e4d4e6ddf9196e074809"
+      "address": "0x96a45827b685d35dab33883968054be024541d6d",
+      "transactionHash": "0x300e2a699bfdc683466fd995d545d44caff3f8b9373a38de7ddb0ebaed49aa8f"
     }
   },
   "schemaVersion": "2.0.0",
-  "updatedAt": "2018-05-10T15:40:39.371Z"
+  "updatedAt": "2018-05-10T16:44:47.194Z"
 }

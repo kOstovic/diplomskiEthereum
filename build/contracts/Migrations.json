@@ -1378,10 +1378,10 @@
     "1337": {
       "events": {},
       "links": {},
-      "address": "0xf66ee7f462e36562c155732ce91cf75f66260930",
-      "transactionHash": "0xf7f7db5413288ad68165b9b7fd038f60e60709dae3a95255d9bcf54bdc4d1e99"
+      "address": "0x6eb6dd20ada16eefc0fce4c083a4195312d68493",
+      "transactionHash": "0x574c07d458932ff4baa82fb820cfc789ff354788d30452406206af5eb4c43f7b"
     }
   },
   "schemaVersion": "2.0.0",
-  "updatedAt": "2018-05-10T15:40:39.373Z"
+  "updatedAt": "2018-05-10T16:44:47.197Z"
 }
