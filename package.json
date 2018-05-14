@@ -1,5 +1,5 @@
 {
-  "name": "truffle-init-webpack",
+  "name": "frontend PII webpack",
   "version": "0.1.0",
   "description": "Truffle SZG access control project",
   "scripts": {
@@ -7,7 +7,7 @@
     "build": "webpack",
     "dev": "webpack-dev-server"
   },
-  "author": "Douglas von Kohorn",
+  "author": "Kresimir Ostovic",
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.22.2",
