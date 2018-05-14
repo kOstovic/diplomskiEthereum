@@ -1,7 +1,7 @@
 {
   "name": "truffle-init-webpack",
-  "version": "0.0.5",
-  "description": "Frontend example using truffle v3",
+  "version": "0.1.0",
+  "description": "Truffle SZG access control project",
   "scripts": {
     "lint": "eslint ./",
     "build": "webpack",
@@ -11,7 +11,7 @@
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.22.2",
-    "babel-core": "^6.22.1",
+    "babel-core": "^6.26.3",
     "babel-eslint": "^6.1.2",
     "babel-loader": "^6.2.10",
     "babel-plugin-transform-runtime": "^6.22.0",
@@ -30,12 +30,12 @@
     "json-loader": "^0.5.4",
     "style-loader": "^0.13.1",
     "truffle-contract": "^1.1.11",
-    "web3": "^0.20.6",
+    "web3": "^1.0.0-beta.34",
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.3.0"
   },
   "dependencies": {
-    "json3": "^3.3.2",
+    "jquery": "^3.3.1",
     "sha1": "^1.1.1"
   }
 }
