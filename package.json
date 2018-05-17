@@ -1,6 +1,6 @@
 {
-  "name": "frontend PII webpack",
-  "version": "0.1.0",
+  "name": "pii-szg",
+  "version": "0.2.0",
   "description": "Truffle SZG access control project",
   "scripts": {
     "lint": "eslint ./",

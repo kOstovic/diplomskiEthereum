@@ -139,6 +139,7 @@ window.App = {
       var jmbag = document.getElementById('jmbagCreateMem').value;
       var personType = document.getElementById('personTypeCreateMem').selectedIndex;
       var uComponenetType = document.getElementById('uComponenetTypeCreateMem').selectedIndex;
+      var tidCreateMem = document.getElementById('tidCreateMem').value;
       
       var jmbagHash = Sha1(jmbag).toString();
       var jmbagHashed = "0x"+jmbagHash;
@@ -149,7 +150,7 @@ window.App = {
         
         piiSZG.deployed().then(function(instance) {
           pii = instance;
-          return pii.createMember(jmbagHashed, personType, uComponenetType, {from: account});
+          return pii.createMember(jmbagHashed, personType, uComponenetType, tidCreateMem, {from: account});
         }).then(function(creation) {
           if(creation.receipt.status == "0x01") {
             self.setStatus("Creating Member complete!");
@@ -172,6 +173,7 @@ window.App = {
         var self = this;
         var jmbag = document.getElementById('jmbagCheck').value;
         var universityKey = document.getElementById('uKeyCheck').value;
+        var tidCheck = document.getElementById('tidCheck').value;
         var d = new Date();
         var n = Date.now();
         let ttime = d.getHours()*hour+d.getMinutes()*minute;
@@ -186,7 +188,7 @@ window.App = {
         var pii;
         piiSZG.deployed().then(function(instance) {
           pii = instance;
-          pii.callAccessTransaction(jmbagHashed, universityKeyHashed, ttime, n,{from: account})
+          pii.callAccessTransaction(jmbagHashed, universityKeyHashed, ttime, n, tidCheck, {from: account})
         .then(function(access) {
           console.log(access);
           self.setStatus("Transaction complete!");

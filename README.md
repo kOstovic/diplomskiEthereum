@@ -2,6 +2,8 @@
 
 #prvi terminal pokrenuti mining node
 ganache-cli --network-id 1337
+ili
+~/Downloads/./ganache-1.1.0-x86_64.AppImage
 
 
 #u truffle.js promijeniti port(8545)
@@ -20,6 +22,7 @@ npm run dev
 curl -d '{"jsonrpc":"2.0","method":"eth_sendTransaction","params": [{"from":"0xEb10c9c61BFc6102c3F1c2Ae0587E9D4b4c79574", "to":"0x801398205E33799CB24eA94aA3109f6E1545BAbe", "value": 5e18}], "id":1}' -X POST http://127.0.0.1:8545/
 
 
+#tid non writable dio kartice, služi za provjeru jeli ukradena: E200341201301700026A6B93
 #address _hValue je string, enumi kao PersonType _personType su uint, ttime je uint kao [0,86400] za sat u danu, n je uint kao timestamp
 
 

@@ -25,6 +25,7 @@ contract piiSZG {
         PersonType personType;
         UniversityComponenetType universityComponenetType;
         bool set;
+        string tid;
         //address membersHashedAddress;
         //public mapping(uint => bool) access;
     }
@@ -116,21 +117,22 @@ contract piiSZG {
         }
         return true;
     }    
-    function testStr20(string str) internal pure returns (bool){
+    function testStr24(string str) internal pure returns (bool){
         bytes memory b = bytes(str);
-        if(b.length != 20) return false;
-        for(uint i; i<20; i++){
-            if(!((b[i] > 48 && b[i] < 57) || (b[i] > 65 && b[i] < 90) || (b[i] > 97 && b[i] < 122))) return false;
+        if(b.length != 24) return false;
+        for(uint i; i<24; i++){
+            if(!((b[i] >= 48 && b[i] <= 57) || (b[i] >= 65 && b[i] <= 90) || (b[i] >= 97 && b[i] <= 122))) return false;
 
         }
         return true;
     }    
 
     //kreiranje nove osobe na temelju unosa hashedValue jmbaga
-    function createMember(address _hValue, PersonType _personType, UniversityComponenetType _uComponenetType) public returns(bool){
+    function createMember(address _hValue, PersonType _personType, UniversityComponenetType _uComponenetType, string _tid) public returns(bool){
         require(uint(_personType) < numOfPersonType && uint(_uComponenetType) < numOfUniversityComponenetType);
         require(members[_hValue].set != true);
-        members[_hValue] = Member(_personType,_uComponenetType,true);
+        require(testStr24(_tid) == true);
+        members[_hValue] = Member(_personType,_uComponenetType,true,_tid);
         //members[_hValue].personType = _personType;
         //members[_hValue].universityComponenetType = _uComponenetType;
         //members[_hValue].set = true;
@@ -151,10 +153,18 @@ contract piiSZG {
     } 
     
     //funkcija za provjeru i kreiranje transakcije te zove interne funkcije koje provjeravaju logičke cijeline te na temelju toga radi transakciju
-    function callAccessTransaction(address addressHashMember, address addressHashUniversityComponenet, uint ttime, uint transactionDateTime) public returns(bool){
+    function callAccessTransaction(address addressHashMember, address addressHashUniversityComponenet, uint ttime, uint transactionDateTime, string tid) public returns(bool){
         //require(testStr20(addressHashMember) && testStr20(addressHashUniversityComponenet) && ttime <= timeInDay);
         require(ttime <= timeInDay && members[addressHashMember].set == true && universityComponenets[addressHashUniversityComponenet].set == true);
+        require(testStr24(tid) == true);
         bool _access = false;
+        
+        //provjera jeli dostavljeni tid jednak onome zapisanom u memberu preko hasha, troši puno manje gasa
+        if(keccak256(tid) != keccak256(members[addressHashMember].tid)){
+            emit ControlEvent(false);
+            return false;
+        }
+        
         //addressHashUniversityComponenet = msg.sender;
         _access = checkSameUniversityOpenedOrPrivileged(addressHashMember,addressHashUniversityComponenet,ttime);
         if(_access == true){
