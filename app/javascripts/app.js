@@ -90,6 +90,7 @@ window.App = {
     }
     return "";
   },
+  //setting top banner message
   setStatus: function(message) {
     var status = document.getElementById("status");
     console.log(message);
@@ -97,6 +98,7 @@ window.App = {
     baseUrl = window.location.href.split("?")[0];
     window.history.pushState('name', '', baseUrl)
   },
+
 
     createUniversityComponent:  function() {
       var pii;
@@ -106,13 +108,14 @@ window.App = {
       var openingTime = parseInt(document.getElementById('openingTimeCreateUComponent').value);
       var closingTime = parseInt(document.getElementById('closingTimeCreateUComponent').value);
       
-
+      //hash of entered key
       var universityKeyHash = Sha1(universityKey);
       var universityKeyHashed = "0x"+universityKeyHash;
       self.setCookie("hashUC",universityKeyHashed,1);
       
       this.setStatus("Initiating transaction of creating University Component... (please wait)");
       
+      //sending UniversityComponent to smart contract
       var pii;
       piiSZG.deployed().then(function(instance) {
         pii = instance;
@@ -141,6 +144,7 @@ window.App = {
       var uComponenetType = document.getElementById('uComponenetTypeCreateMem').selectedIndex;
       var tidCreateMem = document.getElementById('tidCreateMem').value;
       
+      //hash of entered key
       var jmbagHash = Sha1(jmbag).toString();
       var jmbagHashed = "0x"+jmbagHash;
       self.setCookie("hashMem",jmbagHashed,1);
@@ -148,6 +152,7 @@ window.App = {
       this.setStatus("Initiating transaction of creating Member... (please wait)");  
         var pii;
         
+        //sending Member to smart contract
         piiSZG.deployed().then(function(instance) {
           pii = instance;
           return pii.createMember(jmbagHashed, personType, uComponenetType, tidCreateMem, {from: account});
@@ -185,10 +190,12 @@ window.App = {
         self.setCookie("hashAccess1",universityKeyHashed,1);
         self.setCookie("hashAccess2",n,1);
 
+        //sending transaction to smart contract
         var pii;
         piiSZG.deployed().then(function(instance) {
           pii = instance;
           pii.callAccessTransaction(jmbagHashed, universityKeyHashed, ttime, n, tidCheck, {from: account})
+        //on fullfiled promise refresh status about transaction
         .then(function(access) {
           console.log(access);
           self.setStatus("Transaction complete!");
@@ -225,6 +232,7 @@ window.App = {
         hashedTemp = self.getCookie("hashMem");
         piiSZG.deployed().then(function(instance) {
           pii = instance;
+          //get public mapping members
           return pii.members.call(hashedTemp,{from: account});
         }).then(function(value) {
           var status_element = document.getElementById("status");
@@ -240,6 +248,7 @@ window.App = {
         hashedTemp2 = self.getCookie("hashUC");
         piiSZG.deployed().then(function(instance) {
           pii = instance;
+          //get public mapping universityComponenets
           return pii.universityComponenets.call(hashedTemp2,{from: account});
         }).then(function(value) {
           var status_element = document.getElementById("status2");
@@ -257,7 +266,8 @@ window.App = {
         hashedTemp4 = self.getCookie("hashAccess2");
         piiSZG.deployed().then(function(instance) {
           pii = instance;
-          return pii.getAccess.call(hashedTemp3, hashedTemp4, {from: account});
+          //get public mapping universityComponenets
+          return pii.getAccessFromUC.call(hashedTemp3, hashedTemp4, {from: account});
         }).then(function(value) {
           var status_element = document.getElementById("status3");
           status_element.innerHTML = value.valueOf().toString();

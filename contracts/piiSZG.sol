@@ -10,14 +10,19 @@ contract piiSZG {
         bool controlEvent
     );
     
-    event eventTemp(
-        uint controlEvent
-    );
-
     uint timeInDay = 86400;
     uint8 numOfPersonType = 3;
     uint8 numOfUniversityComponenetType = 3;
   
+  
+    //struktura za zapis kontrole ulaza sadrži bool 
+    //jeli dopušten ulaz te hash osobe koja je zatražila pristup
+    struct ControlParameter{
+        bool grantAccess;
+        address hashedAddress;
+
+    }
+
     //struktura Member/Osoba, sadrži enums tipOsobe i 
     //tipFakulteta te bool set za provjeru postoji li 
     struct Member {
@@ -27,18 +32,9 @@ contract piiSZG {
         bool set;
         string tid;
         //address membersHashedAddress;
-        //public mapping(uint => bool) access;
+        mapping(uint => ControlParameter) accessM;
     }
     
-    //struktura za zapis kontrole ulaza sadrži bool 
-    //jeli dopušten ulaz te hash osobe koja je zatražila pristup
-    struct ControlParameter{
-        bool grantAccess;
-        address membersHashedAddress;
-        
-        //uint timeRequested;
-    }
-
     //struktura sastavnica sveučilišta sadrrži enum tipa fakulteta, 
     //radno vrijeme u sekundama te bool set za provjeru postoji li i 
     //zapis kontrole ulaza za tu sastvniu 
@@ -58,25 +54,25 @@ contract piiSZG {
     mapping(address => UniversityComponenet) public universityComponenets;
     mapping(address => Member) public members;
     
-    //getteri za osobu
-    function getPersonType(address _hValue) public view returns (uint){
+    //getteri za osobu, zakomentirani getteri se ne koriste i samo troše gas
+    /*function getPersonType(address _hValue) public view returns (uint){
         require(members[_hValue].set == true);
         return uint(members[_hValue].personType);
     }
     function getUniversityComponenetTypeMem(address _hValue) public view returns (uint){
         require(members[_hValue].set == true);
         return uint(members[_hValue].universityComponenetType);
-    }
+    }*/
     function getMemberSet(address _hValue) public view returns (bool){
         require(members[_hValue].set == true);
         return members[_hValue].set;
     }
 
     //getteri za sveučilišnu komponentu
-    function getUniversityComponenetTypeUC(address _hValue) public view returns (uint){
+    /*function getUniversityComponenetTypeUC(address _hValue) public view returns (uint){
         require(universityComponenets[_hValue].set == true);
         return uint(universityComponenets[_hValue].universityComponenetType);
-    }    
+    }*/    
     function getOpeningTime(address _hValue) public view returns (uint32){
         require(universityComponenets[_hValue].set == true);
         return universityComponenets[_hValue].openingTime;
@@ -89,17 +85,19 @@ contract piiSZG {
         require(universityComponenets[_hValue].set == true);
         return universityComponenets[_hValue].set;
     }
-    function getAccess(address _hValue, uint time) public view returns (bool, address){
+    function getAccessFromUC(address _hValue, uint time) public view returns (bool, address){
         require(universityComponenets[_hValue].set == true);
-        return (universityComponenets[_hValue].access[time].grantAccess, universityComponenets[_hValue].access[time].membersHashedAddress);
-        //return extractControlParameterStructToBytes(universityComponenets[_hValue].access[time]);
+        return (universityComponenets[_hValue].access[time].grantAccess, universityComponenets[_hValue].access[time].hashedAddress);
+    }
+    function getAccessFromMem(address _hValue, uint time) public view returns (bool, address){
+        require(members[_hValue].set == true);
+        return (members[_hValue].accessM[time].grantAccess, members[_hValue].accessM[time].hashedAddress);
     }
     
 
     //pomoćne funckije
     //provjera jesu li dobiveni podatci u ispravnom formatu
     //pure zato što ne vraća ništa iz memorije niti traži po memoriji
-    //vraća byteove strukture ControlParameter zato što ne postoji concanate
     function testNum4(string str) internal pure returns (bool){
         bytes memory b = bytes(str);
         if(b.length != 4) return false;
@@ -132,6 +130,7 @@ contract piiSZG {
         require(uint(_personType) < numOfPersonType && uint(_uComponenetType) < numOfUniversityComponenetType);
         require(members[_hValue].set != true);
         require(testStr24(_tid) == true);
+        //svejedno koji način, oba su ispravna, prvi je kraći-1liner
         members[_hValue] = Member(_personType,_uComponenetType,true,_tid);
         //members[_hValue].personType = _personType;
         //members[_hValue].universityComponenetType = _uComponenetType;
@@ -169,22 +168,26 @@ contract piiSZG {
         _access = checkSameUniversityOpenedOrPrivileged(addressHashMember,addressHashUniversityComponenet,ttime);
         if(_access == true){
             universityComponenets[addressHashUniversityComponenet].access[transactionDateTime] = ControlParameter(_access,addressHashMember);
+            members[addressHashMember].accessM[transactionDateTime] = ControlParameter(_access,addressHashUniversityComponenet);
             emit ControlEvent(true);
             return true;
         }
         _access = checkNotSameUniversityOpenedStudentProfesor(addressHashMember,addressHashUniversityComponenet,ttime);    
         if(_access == true){
             universityComponenets[addressHashUniversityComponenet].access[transactionDateTime] = ControlParameter(_access,addressHashMember);
+            members[addressHashMember].accessM[transactionDateTime] = ControlParameter(_access,addressHashUniversityComponenet);
             emit ControlEvent(true);
             return true;
         }
         _access = checkNotSameUniversityOpenedFER(addressHashMember,addressHashUniversityComponenet,ttime);    
         if(_access == true){
             universityComponenets[addressHashUniversityComponenet].access[transactionDateTime] = ControlParameter(_access,addressHashMember);
+            members[addressHashMember].accessM[transactionDateTime] = ControlParameter(_access,addressHashUniversityComponenet);
             emit ControlEvent(true);
             return true;
         }
         universityComponenets[addressHashUniversityComponenet].access[transactionDateTime] = ControlParameter(_access,addressHashMember);
+        members[addressHashMember].accessM[transactionDateTime] = ControlParameter(_access,addressHashUniversityComponenet);
         emit ControlEvent(false);
         return false;    
     }
