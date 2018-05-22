@@ -181,7 +181,7 @@ window.App = {
         var tidCheck = document.getElementById('tidCheck').value;
         var d = new Date();
         var n = Date.now();
-        let ttime = d.getHours()*hour+d.getMinutes()*minute;
+        let ttime = d.getHours()*hour+d.getMinutes()*minute+d.getSeconds();
         
         var jmbagHash = Sha1(jmbag);
         var jmbagHashed = "0x"+jmbagHash;
