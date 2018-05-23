@@ -44,6 +44,7 @@ contract piiSZG {
         uint32 openingTime;
         uint32 closingTime;
         //address universityComponenetsHashedAddress;
+        address universityComponenetAccount;
         bool set;
         mapping(uint => ControlParameter) access;
 
@@ -54,25 +55,25 @@ contract piiSZG {
     mapping(address => UniversityComponenet) public universityComponenets;
     mapping(address => Member) public members;
     
-    //getteri za osobu, zakomentirani getteri se ne koriste i samo troše gas
-    /*function getPersonType(address _hValue) public view returns (uint){
+    //getteri za osobu, zakomentirani getteri se trenutno ne koriste i samo troše gas
+    function getPersonType(address _hValue) public view returns (uint){
         require(members[_hValue].set == true);
         return uint(members[_hValue].personType);
     }
     function getUniversityComponenetTypeMem(address _hValue) public view returns (uint){
         require(members[_hValue].set == true);
         return uint(members[_hValue].universityComponenetType);
-    }*/
+    }
     function getMemberSet(address _hValue) public view returns (bool){
         require(members[_hValue].set == true);
         return members[_hValue].set;
     }
 
     //getteri za sveučilišnu komponentu
-    /*function getUniversityComponenetTypeUC(address _hValue) public view returns (uint){
+    function getUniversityComponenetTypeUC(address _hValue) public view returns (uint){
         require(universityComponenets[_hValue].set == true);
         return uint(universityComponenets[_hValue].universityComponenetType);
-    }*/    
+    }  
     function getOpeningTime(address _hValue) public view returns (uint32){
         require(universityComponenets[_hValue].set == true);
         return universityComponenets[_hValue].openingTime;
@@ -146,7 +147,7 @@ contract piiSZG {
         //_hValue = msg.sender;
         require(universityComponenets[_hValue].set != true);
         //registerUC(_hValue);
-        universityComponenets[_hValue] = UniversityComponenet(_uComponenetType, _openingTime, _closingTime,true);
+        universityComponenets[_hValue] = UniversityComponenet(_uComponenetType, _openingTime, _closingTime,msg.sender,true);
         emit ControlEvent(true);
         return true;
     } 
@@ -154,6 +155,7 @@ contract piiSZG {
     //funkcija za provjeru i kreiranje transakcije te zove interne funkcije koje provjeravaju logičke cijeline te na temelju toga radi transakciju
     function callAccessTransaction(address addressHashMember, address addressHashUniversityComponenet, uint ttime, uint transactionDateTime, string tid) public returns(bool){
         //require(testStr20(addressHashMember) && testStr20(addressHashUniversityComponenet) && ttime <= timeInDay);
+        require(msg.sender == universityComponenets[addressHashUniversityComponenet].universityComponenetAccount);
         require(ttime <= timeInDay && members[addressHashMember].set == true && universityComponenets[addressHashUniversityComponenet].set == true);
         require(testStr24(tid) == true);
         bool _access = false;

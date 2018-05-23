@@ -104,6 +104,12 @@ window.App = {
       var pii;
       var self = this;  
       var universityKey = document.getElementById('uKeyCreateUComponent').value;
+      if(universityKey == "0036")
+        account = accounts[0];
+      else if(universityKey == "1111")
+        account = accounts[1];
+      else
+        account = accounts[2];
       var universityComponenetType = document.getElementById('uCTypeCreateUComponent').selectedIndex;
       var openingTime = parseInt(document.getElementById('openingTimeCreateUComponent').value);
       var closingTime = parseInt(document.getElementById('closingTimeCreateUComponent').value);
@@ -178,6 +184,12 @@ window.App = {
         var self = this;
         var jmbag = document.getElementById('jmbagCheck').value;
         var universityKey = document.getElementById('uKeyCheck').value;
+        if(universityKey == "0036")
+          account = accounts[0];
+        else if(universityKey == "1111")
+          account = accounts[1];
+        else
+        account = accounts[2];
         var tidCheck = document.getElementById('tidCheck').value;
         var d = new Date();
         var n = Date.now();
