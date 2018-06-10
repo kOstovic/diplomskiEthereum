@@ -34,7 +34,7 @@ contract piiSZG {
         //address membersHashedAddress;
         mapping(uint => ControlParameter) accessM;
     }
-    
+    //bloom filtri
     //struktura sastavnica sveučilišta sadrrži enum tipa fakulteta, 
     //radno vrijeme u sekundama te bool set za provjeru postoji li i 
     //zapis kontrole ulaza za tu sastvniu 

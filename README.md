@@ -13,6 +13,8 @@ truffle compile
 truffle migrate --reset
 npm run dev
 
+geth --dev !!!
+
 
 #metamask trenutni privatni account
 #0x0a2192380E4a24c37944D73909cf4373D6359Ac4
