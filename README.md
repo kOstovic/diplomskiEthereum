@@ -1,5 +1,11 @@
 # diplomskiEthereum
 
+Node version 8.11.0
+
+npm install -g angular bootstrap browserify geth jquery truffle require requirejs web3 sha1 webpack make-runnable request-promise truffle-contract net
+
+
+
 #prvi terminal pokrenuti mining node
 ganache-cli --network-id 1337
 ili
